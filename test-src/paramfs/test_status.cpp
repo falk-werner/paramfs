@@ -26,8 +26,10 @@ TEST_P(status_test_fixture, to_string)
 INSTANTIATE_TEST_CASE_P(status_test, status_test_fixture, ::testing::Values(
     param{"good", status::good},
     param{"bad", status::bad},
+    param{"bad (internal error)", status::bad_internal_error},
     param{"bad (not implemented)", status::bad_not_implemented},
-    param{"bad (unknown path)", status::bad_unknown_path}
+    param{"bad (unknown path)", status::bad_unknown_path},
+    param{"bad (paramter already provided)", status::bad_parameter_already_provided}
 ));
 
 TEST(status, to_string_unknown_code)

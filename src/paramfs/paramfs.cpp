@@ -22,7 +22,8 @@ int paramfs::run(int argc, char* argv[])
 
 void paramfs::add(std::shared_ptr<provider_i> provider)
 {
-    
+    d->registry_.set_active_provider(provider);
+    provider->describe(d->registry_);
 }
 
 }
