@@ -20,4 +20,10 @@ int paramfs::run(int argc, char* argv[])
     return -1;
 }
 
+void paramfs::add(std::shared_ptr<provider_i> provider)
+{
+    
 }
+
+}
+
