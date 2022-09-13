@@ -16,6 +16,7 @@ add_library(libparamfs STATIC
     src/paramfs/status.cpp
     src/paramfs/param_error.cpp
     src/paramfs/registry.cpp
+    src/paramfs/filesystem/directory.cpp
 )
 
 set_target_properties(libparamfs PROPERTIES OUTPUT_NAME "paramfs")
