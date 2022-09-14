@@ -1,4 +1,5 @@
 #include "paramfs/filesystem/directory.hpp"
+#include "paramfs/param_error.hpp"
 
 namespace paramfs
 {
@@ -44,6 +45,24 @@ void directory::iterate_child_nodes(std::function<void(node_i &)> visit)
         node_i * node = entry.second.get();
         visit(*node);
     }
+}
+
+void directory::add_child(std::unique_ptr<node_i> node)
+{
+    auto it = child_nodes.find(node->name());
+    if (it == child_nodes.end())
+    {
+        child_nodes[node->name()] = std::move(node);
+    }
+    else
+    {
+        throw param_error(status::bad_internal_error, "path already exists");
+    }
+}
+
+std::string directory::get_contents()
+{
+    throw param_error(status::bad_internal_error, "no contents");
 }
 
 

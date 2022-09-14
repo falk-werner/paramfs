@@ -1,18 +1,15 @@
-#ifndef PARAMFS_FILESYSTEM_DIRECTORY_H
-#define PARAMFS_FILESYSTEM_DIRECTORY_H
+#ifndef PARAMFS_STATIC_FILE_HPP
+#define PARAMFS_STATIC_FILE_HPP
 
 #include "paramfs/filesystem/node_i.hpp"
-#include <unordered_map>
-#include <memory>
 
 namespace paramfs
 {
 
-class directory: public node_i
+class static_file: public node_i
 {
 public:
-    directory(std::string const & name);
-    ~directory() override = default;
+    static_file(std::string const & name, std::string const & contents);
     std::string const & name() const override;
     int mode() const override;
     bool is_dir() const override;
@@ -22,7 +19,7 @@ public:
     std::string get_contents() override;
 private:
     std::string name_;
-    std::unordered_map<std::string, std::unique_ptr<node_i>> child_nodes;
+    std::string contents_;
 };
 
 }
