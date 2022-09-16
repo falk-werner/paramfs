@@ -34,119 +34,35 @@ void * fs_init(fuse_conn_info * connection, fuse_config * config)
 int fs_access(char const * path, int mask)
 {
     auto * filesystem = get_filesystem();
-    auto * node = filesystem->get_node(path);
-
-    if (nullptr != node)
-    {
-        return (0 != (mask & node->mode())) ? 0 : -EACCES;
-    }
-    else
-    {
-        return -ENOENT;
-    }
+    return filesystem->access(path, mask);
 }
 
 int fs_getattr(char const * path, struct stat * buffer, fuse_file_info * fi)
 {
     auto * filesystem = get_filesystem();
-    auto * node = filesystem->get_node(path);
+    uint64_t * handle = (nullptr != fi) ? &fi->fh : nullptr;
+    return filesystem->getattr(path, buffer, handle);
 
-    if (nullptr != node)
-    {
-        if (node->is_dir())
-        {
-            buffer->st_mode = S_IFDIR | node->mode();
-            buffer->st_nlink = 2;
-            return 0;
-        }
-        else
-        {
-            buffer->st_mode = S_IFREG | node->mode();
-            buffer->st_nlink = 1;
-
-            off_t size = 0;
-            if (nullptr != fi)
-            {
-                try
-                {
-                    auto const & contents = filesystem->get_contents(fi->fh);
-                    size = contents.size();
-                }
-                catch(...)
-                {
-                    // swallow
-                }
-                
-            }
-
-            buffer->st_size = size;
-            return 0;
-        }
-    }
-    else
-    {
-        return -ENOENT;
-    }
 }
 
 int fs_readdir(char const * path, void * buffer, fuse_fill_dir_t filler, off_t offset, fuse_file_info * fi, fuse_readdir_flags flags)
 {
     auto * filesystem = get_filesystem();
-    auto * dir = filesystem->get_node(path);
-
-    if (nullptr != dir)
-    {
-        if (dir->is_dir())
-        {
-            filler(buffer, ".", nullptr, 0, static_cast<fuse_fill_dir_flags>(0));
-            filler(buffer, "..", nullptr, 0, static_cast<fuse_fill_dir_flags>(0));
-
-            dir->iterate_child_nodes([&filler, buffer](auto & node) {
-                filler(buffer, node.name().c_str(), nullptr, 0, static_cast<fuse_fill_dir_flags>(0));
-            });
-
-            return 0;
-        }
-        else
-        {
-            return -ENOTDIR;
-        }
-    }
-    else
-    {
-        return -ENOENT;
-    }
+    return filesystem->readdir(path, [buffer, &filler](auto const & name) {
+        filler(buffer, name.c_str(), nullptr, 0, static_cast<fuse_fill_dir_flags>(0));
+    });
 }
 
 int fs_open(char const * path, fuse_file_info * fi)
 {
     auto * filesystem = get_filesystem();
-    auto * file = filesystem->get_node(path);
-
-    if (nullptr != file)
-    {
-        if (!file->is_dir())
-        {
-            fi->fh = filesystem->open_file(file->get_contents());
-            return 0;
-        }
-        else
-        {
-            return -EACCES;
-        }
-    }
-    else
-    {
-        return -ENOENT;
-    }
-
-    return -1;
+    return filesystem->open(path, fi->flags, fi->fh);
 }
 
 int fs_release(char const * path, fuse_file_info * fi)
 {
     auto * filesystem = get_filesystem();
-    filesystem->close_file(fi->fh);
+    filesystem->release(fi->fh);
 
     return 0;
 }
@@ -156,30 +72,7 @@ int fs_read(char const * path, char * buffer, size_t size, off_t offset, fuse_fi
     (void) path;
 
     auto * filesystem = get_filesystem();
-
-    try
-    {
-        std::string const & contents = filesystem->get_contents(fi->fh);
-        if (contents.size() > offset)
-        {
-            size_t const remaining = contents.size() - offset;
-            size_t const len = (size < remaining) ? size : remaining;
-            memcpy(reinterpret_cast<void*>(buffer), reinterpret_cast<void const*>(&contents.c_str()[offset]), len);
-            return len;
-        }
-        else if (contents.size() == offset)
-        {
-            return 0;
-        }
-        else
-        {
-            return -EFAULT;
-        }
-    }
-    catch (...)
-    {
-        return -EBADF;
-    }
+    return filesystem->read(fi->fh, buffer, size, offset);
 }
 
 

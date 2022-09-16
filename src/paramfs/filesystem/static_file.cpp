@@ -1,4 +1,5 @@
 #include "paramfs/filesystem/static_file.hpp"
+#include "paramfs/filesystem/infile.hpp"
 #include "paramfs/param_error.hpp"
 
 namespace paramfs
@@ -41,9 +42,14 @@ void static_file::add_child(std::unique_ptr<node_i> node)
     throw param_error(status::bad_internal_error, "no dir");
 }
 
-std::string static_file::get_contents()
+std::unique_ptr<pseudofile_i> static_file::open_for_read()
 {
-    return contents_;
+    return std::make_unique<infile>(contents_);
+}
+
+void static_file::set_contents(std::string const & value) 
+{
+    (void) value;
 }
 
 }

@@ -19,6 +19,7 @@ add_library(libparamfs STATIC
     src/paramfs/filesystem/filesystem.cpp
     src/paramfs/filesystem/directory.cpp
     src/paramfs/filesystem/static_file.cpp
+    src/paramfs/filesystem/infile.cpp
 )
 
 set_target_properties(libparamfs PROPERTIES OUTPUT_NAME "paramfs")

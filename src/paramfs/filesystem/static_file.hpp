@@ -16,7 +16,8 @@ public:
     node_i * get_child(std::string const & name) override;
     void iterate_child_nodes(std::function<void(node_i &)> visit) override;
     void add_child(std::unique_ptr<node_i> node) override;
-    std::string get_contents() override;
+    std::unique_ptr<pseudofile_i> open_for_read() override;
+    void set_contents(std::string const & value) override;
 private:
     std::string name_;
     std::string contents_;
