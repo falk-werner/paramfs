@@ -47,9 +47,9 @@ std::unique_ptr<pseudofile_i> static_file::open_for_read()
     return std::make_unique<infile>(contents_);
 }
 
-void static_file::set_contents(std::string const & value) 
+std::unique_ptr<pseudofile_i> static_file::open_for_write()
 {
-    (void) value;
+    throw param_error(status::bad_internal_error, "no contents");
 }
 
 }

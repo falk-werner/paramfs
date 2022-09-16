@@ -65,9 +65,9 @@ std::unique_ptr<pseudofile_i> directory::open_for_read()
     throw param_error(status::bad_internal_error, "no contents");
 }
 
-void directory::set_contents(std::string const &value)
+std::unique_ptr<pseudofile_i> directory::open_for_write()
 {
-    (void) value;
+    throw param_error(status::bad_internal_error, "no contents");
 }
 
 }
