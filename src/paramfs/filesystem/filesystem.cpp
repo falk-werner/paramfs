@@ -155,6 +155,10 @@ int filesystem::open(std::string const & path, int flags, uint64_t & handle)
                     handle = ++fh;
                     open_files[handle] = std::move(node->open_for_read());
                     return 0;
+                case O_WRONLY:
+                    handle = ++fh;
+                    open_files[handle] = std::move(node->open_for_write());
+                    return 0;
                 default:
                     return -EACCES;
             }

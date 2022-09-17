@@ -42,6 +42,11 @@ int outfile::write(char const * buffer, size_t size, off_t offset)
         data.reserve(capacity);
     }
 
+    if (needed > data.size())
+    {
+        data.resize(needed);
+    }
+
     void const * from = reinterpret_cast<void const *>(buffer);
     void * to = reinterpret_cast<void*>(&data.data()[offset]);
 

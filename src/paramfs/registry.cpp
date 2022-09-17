@@ -1,7 +1,7 @@
 #include "paramfs/registry.hpp"
 #include "paramfs/param_error.hpp"
 #include "paramfs/filesystem/filesystem.hpp"
-#include "paramfs/filesystem/static_file.hpp"
+#include "paramfs/paramvalue_node.hpp"
 
 namespace paramfs
 {
@@ -26,7 +26,7 @@ void registry::add_param(std::string const & path)
     }
 
     params[path] = active_provider;
-    filesystem_.add(path, std::make_unique<static_file>("value", "42"));
+    filesystem_.add(path, std::make_unique<paramvalue_node>(path, active_provider));
 }
 
 void registry::set_active_provider(std::shared_ptr<provider_i> provider)

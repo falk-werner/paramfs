@@ -16,6 +16,7 @@ add_library(libparamfs STATIC
     src/paramfs/status.cpp
     src/paramfs/param_error.cpp
     src/paramfs/registry.cpp
+    src/paramfs/paramvalue_node.cpp
     src/paramfs/filesystem/filesystem.cpp
     src/paramfs/filesystem/directory.cpp
     src/paramfs/filesystem/static_file.cpp
@@ -56,6 +57,7 @@ pkg_check_modules(GTEST REQUIRED gtest_main)
 
 add_executable(alltests
     test-src/paramfs/test_status.cpp
+    test-src/paramfs/test_outfile.cpp
 )
 
 target_include_directories(alltests PRIVATE
